@@ -1,4 +1,16 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using System.Configuration;
+using WebApplication8.Data;
+
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("dbContextConnection") ?? throw new InvalidOperationException("Connection string 'dbContextConnection' not found.");
+
+builder.Services.AddDbContext<dbContext>(options =>
+    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 23))));
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<dbContext>();
 
 // Add services to the container.
 
@@ -18,6 +30,8 @@ options.AddPolicy("AllowFrontend", builder =>
 });
     });
 
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -29,6 +43,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();;
 
 app.UseAuthorization();
 
