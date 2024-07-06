@@ -1,8 +1,12 @@
+using Google.Protobuf;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Configuration;
 using WebApplication8.Data;
+using WebApplication8.Repository;
+using WebApplication8.Repository.IRepository;
+using WebApplication8.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("MySqlConnection") ?? throw new InvalidOperationException("Connection string 'dbContextConnection' not found.");
@@ -19,6 +23,13 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddSingleton(new MqttService("mqtt.server.com"));
+
+// Register MQTT controller
+builder.Services.AddControllers();
+
+builder.Services.AddScoped<Imessage, MessageRepository>();
 
 builder.Services.AddCors(options =>
 {
@@ -41,6 +52,13 @@ if (app.Environment.IsDevelopment())
     app.UseCors("AllowAll");
     app.UseSwagger();
     app.UseSwaggerUI();
+
+    app.UseRouting();
+
+    app.UseEndpoints(endpoints =>
+    {
+        endpoints.MapControllers();
+    });
 }
 
 app.UseHttpsRedirection();

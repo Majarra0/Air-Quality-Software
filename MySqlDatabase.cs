@@ -10,7 +10,7 @@ public class MySqlDatabase
 
     public MySqlDatabase()
     {
-        connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["MySqlConnection"].ConnectionString;
+            connectionString = "server=roundhouse.proxy.rlwy.net;port=14081;database=railway;uid=root;pwd=dyVffpqiLLedigOgxJLUvvRpXNfLffel;";
     }
 
     public DataTable GetData(string query)

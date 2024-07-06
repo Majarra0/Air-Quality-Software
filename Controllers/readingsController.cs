@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol.Plugins;
 using System.Data;
 using WebApplication8.Data;
 using WebApplication8.Models;
+using WebApplication8.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -15,12 +17,6 @@ namespace WebApplication8.Controllers
     {
 
         private MySqlDatabase db = new MySqlDatabase();
-
-        public ActionResult Index()
-        {
-            DataTable dt = db.GetData("SELECT * FROM Readings");
-            return Ok(dt);
-        }
 
         private readonly dbContext _db;
 
@@ -38,9 +34,9 @@ namespace WebApplication8.Controllers
 
         // GET api/<readingsController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public Readings Get(int read)
         {
-            return "value";
+            return _db.Readings.FirstOrDefault(x => x.AirQ == read);
         }
 
         // POST api/<readingsController>
@@ -48,6 +44,15 @@ namespace WebApplication8.Controllers
         public void Post([FromBody] Readings value)
         {
             _db.Readings.Add(value);
+            _db.SaveChanges();
+        }
+
+        // POST api/<readingsController>
+        [HttpPost("messagepost")]
+        public void PostM(string sms)
+        {
+            var obj = new Messages { Id = 0, message = sms };
+            _db.Messages.Add(obj);
             _db.SaveChanges();
         }
 

@@ -13,6 +13,7 @@ public class dbContext : IdentityDbContext<IdentityUser>
     }
 
     public DbSet<Readings> Readings { get; set; }
+    public DbSet<Messages> Messages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
