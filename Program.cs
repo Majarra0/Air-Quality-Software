@@ -7,11 +7,23 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options =>
+{
+options.AddPolicy("AllowFrontend", builder =>
+{
+    builder.WithOrigins("*") // Allow requests from any origin (for testing only)
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+
+});
+    });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseCors("AllowAll");
     app.UseSwagger();
     app.UseSwaggerUI();
 }
